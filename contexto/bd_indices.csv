@@ -1,0 +1,18 @@
+﻿dbo;LogProceso;IX_LogProceso_FechaUtc;NONCLUSTERED;0;0;0;FechaUtc
+dbo;LogProceso;IX_LogProceso_ProcesoId;NONCLUSTERED;0;0;0;ProcesoId
+dbo;LogProceso;PK__LogProce__3214EC0735970E2D;CLUSTERED;1;1;0;Id
+dbo;ROL;PK_ROL;CLUSTERED;1;1;0;COD_ROL
+dbo;Rpt_UsuariosCruce;IX_Rpt_UsuariosCruce_CorreoExcel;NONCLUSTERED;0;0;0;CorreoExcel
+dbo;Rpt_UsuariosCruce;IX_Rpt_UsuariosCruce_Estado;NONCLUSTERED;0;0;0;Estado
+dbo;Rpt_UsuariosCruce;IX_Rpt_UsuariosCruce_GeneradoEn;NONCLUSTERED;0;0;0;GeneradoEn
+dbo;Rpt_UsuariosCruce;IX_Rpt_UsuariosCruce_Proceso;NONCLUSTERED;0;0;0;ProcesoId
+dbo;Rpt_UsuariosCruce;IX_Rpt_UsuariosCruce_ProcesoEstado;NONCLUSTERED;0;0;0;ProcesoId, Estado
+dbo;Rpt_UsuariosCruce;IX_Rpt_UsuariosCruce_UsuarioExcel;NONCLUSTERED;0;0;0;UsuarioExcel
+dbo;Rpt_UsuariosCruce;PK__Rpt_Usua__3214EC07A0026CC8;CLUSTERED;1;1;0;Id
+dbo;Stg_UsuariosExcel;IX_Stg_UsuariosExcel_CargadoEn;NONCLUSTERED;0;0;0;CargadoEn
+dbo;Stg_UsuariosExcel;IX_Stg_UsuariosExcel_Correo;NONCLUSTERED;0;0;0;Correo
+dbo;Stg_UsuariosExcel;IX_Stg_UsuariosExcel_Usuario;NONCLUSTERED;0;0;0;Usuario
+dbo;Stg_UsuariosExcel;PK__Stg_Usua__3214EC07D1D09403;CLUSTERED;1;1;0;Id
+dbo;T_USUARIOS_BAJA_OF;PK_T_USUARIOS;CLUSTERED;1;1;0;Id
+dbo;USUARIO_ROL;PK_USUARIO_ROL;CLUSTERED;1;1;0;COD_USUARIO, COD_ROL
+dbo;USUARIOS_MMS;PK_USUARIOS_MMS;CLUSTERED;1;1;0;COD_USUARIO

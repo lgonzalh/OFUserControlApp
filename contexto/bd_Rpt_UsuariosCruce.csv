@@ -1,0 +1,3 @@
+﻿dbo;LogProceso;ProcesoId;uniqueidentifier;NO;NULL
+dbo;Rpt_UsuariosCruce;ProcesoId;uniqueidentifier;NO;NULL
+dbo;vw_EstadisticasUsuarios;ProcesoId;uniqueidentifier;NO;NULL

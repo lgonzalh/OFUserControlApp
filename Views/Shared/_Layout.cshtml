@@ -1,0 +1,231 @@
+﻿<!DOCTYPE html>
+<html lang="es" class="h-100">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Control de Usuarios OF</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        :root {
+            --primary-color: #dc2626; /* Rojo Coca Cola */
+            --primary-dark: #b91c1c;
+            --secondary-color: #374151; /* Gris Oscuro */
+            --success-color: #22c55e;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --light-bg: #f9fafb;
+            --border-color: #d1d5db;
+            --text-dark: #111827; /* Negro */
+            --text-light: #ffffff; /* Blanco */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: white;
+            color: var(--text-dark);
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+            color: var(--text-light) !important;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        .card {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid var(--border-color);
+            border-radius: 12px 12px 0 0 !important;
+            padding: 1.5rem;
+        }
+
+        .progress {
+            height: 2px; /* Barra de progreso muy delgada */
+            border-radius: 1px;
+            background-color: #e5e7eb;
+        }
+
+        .progress-bar {
+            background-color: var(--text-dark) !important; /* Barra de progreso negra */
+        }
+
+        .table th {
+            background-color: #f1f5f9;
+            color: var(--secondary-color);
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .badge-success {
+            background-color: var(--success-color) !important;
+        }
+
+        .badge-warning {
+            background-color: var(--warning-color) !important;
+        }
+
+        .text-success {
+            color: var(--success-color) !important;
+        }
+
+        .text-warning {
+            color: var(--warning-color) !important;
+        }
+
+        .alert {
+            border-radius: 8px;
+            border: none;
+        }
+
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25);
+        }
+
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .file-upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+
+        .file-upload-area:hover, .file-upload-area.dragover {
+            border-color: var(--primary-color);
+            background-color: #f8fafc;
+        }
+
+        .btn-success {
+            background-color: #000000;
+            border-color: #000000;
+            font-weight: normal;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+            color: white;
+            border-radius: 4px;
+        }
+
+        .btn-success:hover {
+            background-color: #333333;
+            border-color: #333333;
+            color: white;
+        }
+
+        .text-success {
+            color: #000000 !important;
+        }
+
+        .alert-success {
+            background-color: #ffffff !important;
+            border: 1px solid #000000 !important;
+            color: #000000 !important;
+        }
+
+        .badge-success {
+            background-color: #000000 !important;
+            color: white !important;
+        }
+
+        .badge-danger {
+            background-color: #ff0000 !important;
+            color: white !important;
+        }
+
+        /* Estilo básico para el botón de elegir archivo */
+        #elegirArchivoBtn {
+            background-color: #f0f0f0 !important;
+            color: #000000 !important;
+            border: 1px solid #999999 !important;
+            padding: 4px 12px !important;
+            font-size: 13px !important;
+            font-family: Arial !important;
+            border-radius: 0 !important;
+            cursor: pointer !important;
+            display: inline-block !important;
+        }
+
+        #elegirArchivoBtn:hover {
+            background-color: #e9ecef !important;
+        }
+
+        /* Estilos para el navbar */
+        .navbar-dark .navbar-brand {
+            color: var(--text-light) !important;
+        }
+
+        .navbar-dark .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+
+        .navbar-dark .nav-link:hover {
+            color: rgba(255, 255, 255, 1) !important;
+        }
+
+        /* Footer con texto blanco */
+        .footer {
+            background-color: var(--text-dark) !important;
+            color: var(--text-light) !important;
+        }
+    </style>
+</head>
+<body class="d-flex flex-column h-100">
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="@Url.Action("Index", "Home")">
+                    Control de Usuarios OF
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse">
+                    <ul class="navbar-nav ms-auto">
+                        <!-- Removido el enlace de Inicio -->
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container my-4 flex-grow-1">
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="footer text-white">
+        <div class="container text-center py-3">
+            <small>&copy; 2025 - Control de Usuarios OF.</small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

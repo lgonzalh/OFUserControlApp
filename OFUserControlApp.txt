@@ -1,0 +1,18 @@
+OFUserControlApp
+N_v8!jvWY_!%E?9
+
+Datos de la Tarjeta (Home)
+Título: OFUserControlApp 
+Descripción: Plataforma robusta de auditoría para la validación y sincronización de identidades entre sistemas externos y el Directorio Activo corporativo. 
+Botón: Ver detalles Link GitHub: https://github.com/lgonzalh/OFUserControlApp.git
+
+Página de Detalles (Review / Funcionalidades)
+Reseña OFUserControlApp es una solución de ingeniería de software desarrollada en ASP.NET Core 10.0 diseñada para la gestión crítica de identidades mediante el procesamiento automatizado de archivos Excel de alta volumetría. La aplicación implementa Clean Architecture para garantizar una separación estricta de intereses, utilizando PostgreSQL sobre Supabase como motor de persistencia cloud-native. El sistema optimiza el flujo de validación de usuarios contra el Directorio Activo, permitiendo detectar discrepancias de acceso y estados de actividad de forma ágil, asegurando el cumplimiento de las políticas de seguridad y gobernanza de datos en entornos empresariales complejos. (2025)
+
+Funcionalidades
+
+Validación Cruzada Automatizada: Ejecución de algoritmos de coincidencia entre listados externos y el Directorio Activo mediante el cruce de datos en capas de base de datos optimizadas.
+Arquitectura N-Layer Escalable: Implementación estructurada (Domain, Application, Infrastructure) que permite la extensibilidad del sistema y el desacoplamiento de la lógica de negocio.
+Monitoreo Transaccional en Tiempo Real: Interfaz dinámica potenciada por SignalR que proporciona retroalimentación instantánea sobre el progreso de la carga y el procesamiento de registros.
+Procesamiento de Datos con EPPlus: Motor de integración de hojas de cálculo de alto rendimiento para la extracción, validación y exportación de reportes técnicos detallados.
+Persistencia Resiliente en la Nube: Configuración avanzada de Entity Framework Core para la gestión de datos estructurados en Supabase, garantizando alta disponibilidad y trazabilidad.

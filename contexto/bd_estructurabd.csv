@@ -1,0 +1,10 @@
+﻿dbo;DaneTmp;BASE TABLE;Tabla;4
+dbo;LogProceso;BASE TABLE;Tabla;6
+dbo;ROL;BASE TABLE;Tabla;5
+dbo;Rpt_UsuariosCruce;BASE TABLE;Tabla;9
+dbo;Stg_UsuariosExcel;BASE TABLE;Tabla;6
+dbo;T_USUARIOS_BAJA_OF;BASE TABLE;Tabla;20
+dbo;USUARIO_ROL;BASE TABLE;Tabla;2
+dbo;USUARIOS_MMS;BASE TABLE;Tabla;6
+dbo;View_Usuarios;VIEW;Vista;22
+dbo;vw_EstadisticasUsuarios;VIEW;Vista;6

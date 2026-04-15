@@ -1,0 +1,193 @@
+@{
+    ViewData["Title"] = "Resultados del Proceso";
+    var procesoId = ViewBag.ProcesoId as string;
+    var resumen = ViewBag.Resumen as OFUserControlApp.Application.DTOs.ProcesoResultado;
+    var resultados = ViewBag.Resultados as OFUserControlApp.Application.DTOs.ResultadoPaginado;
+}
+
+<div class="row">
+    <div class="col-12">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Action("Index", "Home")" class="text-decoration-none">
+                        Inicio
+                    </a>
+                </li>
+                <li class="breadcrumb-item active">Resultados</li>
+            </ol>
+        </nav>
+
+        <!-- Título -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h2 fw-bold text-dark mb-1">
+                    Resultados del Proceso
+                </h1>
+                <p class="text-muted mb-0">ID del Proceso: <code>@procesoId</code></p>
+            </div>
+            <div>
+                <a href="/api/Api/download-excel/@procesoId" class="btn btn-dark">
+                    Descargar Informe Total
+                </a>
+                <a href="/api/Api/download-inactive-excel/@procesoId" class="btn btn-outline-dark ms-2">
+                    Descargar Inactivos
+                </a>
+                <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary ms-2">
+                    Nuevo Proceso
+                </a>
+            </div>
+        </div>
+
+        @if (resumen != null && resumen.Exitoso)
+        {
+            <!-- Resumen estadístico -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <h3 class="fw-bold text-dark">@resumen.Total.ToString("N0")</h3>
+                            <h6 class="text-muted">Total de Usuarios</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <h3 class="fw-bold text-dark">@resumen.Habilitados.ToString("N0")</h3>
+                            <h6 class="text-muted">Habilitados</h6>
+                            @if (resumen.Total > 0)
+                            {
+                                <div class="progress mt-2" style="height: 2px;">
+                                    <div class="progress-bar bg-dark" style="width: @((double)resumen.Habilitados / resumen.Total * 100)%"></div>
+                                </div>
+                                <small class="text-muted">@(((double)resumen.Habilitados / resumen.Total * 100).ToString("F1"))%</small>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <h3 class="fw-bold text-dark">@resumen.Inactivos.ToString("N0")</h3>
+                            <h6 class="text-muted">Inactivos</h6>
+                            @if (resumen.Total > 0)
+                            {
+                                <div class="progress mt-2" style="height: 2px;">
+                                    <div class="progress-bar bg-dark" style="width: @((double)resumen.Inactivos / resumen.Total * 100)%"></div>
+                                </div>
+                                <small class="text-muted">@(((double)resumen.Inactivos / resumen.Total * 100).ToString("F1"))%</small>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if (resultados != null && resultados.Items.Any())
+            {
+                <!-- Tabla de resultados -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            Detalle de Usuarios
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Usuario</th>
+                                        <th>Nombre</th>
+                                        <th>Email</th>
+                                        <th>Estado</th>
+                                        <th>Fecha Verificación</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var usuario in resultados.Items)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@usuario.Usuario</strong>
+                                            </td>
+                                            <td>@usuario.Nombre</td>
+                                            <td>@usuario.Email</td>
+                                            <td>
+                                                @if (usuario.EstaHabilitado)
+                                                {
+                                                    <span class="badge bg-danger text-white">Habilitado</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-dark text-white">Inactivo</span>
+                                                }
+                                            </td>
+                                            <td>@usuario.FechaVerificacion.ToString("dd/MM/yyyy HH:mm")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Paginación -->
+                        @if (resultados.TotalPages > 1)
+                        {
+                            <nav aria-label="Navegación de páginas">
+                                <ul class="pagination justify-content-center">
+                                    @if (resultados.CurrentPage > 1)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" href="@Url.Action("Results", "Home", new { procesoId, page = resultados.CurrentPage - 1 })">
+                                                Anterior
+                                            </a>
+                                        </li>
+                                    }
+
+                                    @for (int i = Math.Max(1, resultados.CurrentPage - 2); i <= Math.Min(resultados.TotalPages, resultados.CurrentPage + 2); i++)
+                                    {
+                                        <li class="page-item @(i == resultados.CurrentPage ? "active" : "")">
+                                            <a class="page-link" href="@Url.Action("Results", "Home", new { procesoId, page = i })">@i</a>
+                                        </li>
+                                    }
+
+                                    @if (resultados.CurrentPage < resultados.TotalPages)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" href="@Url.Action("Results", "Home", new { procesoId, page = resultados.CurrentPage + 1 })">
+                                                Siguiente
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </nav>
+                        }
+
+                        <div class="text-center text-muted">
+                            <small>
+                                Mostrando @((resultados.CurrentPage - 1) * resultados.PageSize + 1) a 
+                                @Math.Min(resultados.CurrentPage * resultados.PageSize, resultados.TotalItems) 
+                                de @resultados.TotalItems registros
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    <h5 class="alert-heading">Sin resultados</h5>
+                    <p>No se encontraron usuarios para mostrar en esta página.</p>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="alert alert-danger">
+                <h5 class="alert-heading">Error</h5>
+                <p>No se pudo cargar el resumen del proceso. Por favor, verifique el ID del proceso.</p>
+            </div>
+        }
+    </div>
+</div>
