@@ -1,5 +1,7 @@
 # OFUserControlApp
 
+<img width="1010" height="1029" alt="Captura de pantalla 2026-04-27 154712" src="https://github.com/user-attachments/assets/04a35064-201d-4179-bd57-de27e84deba7" />
+
 ## English
 
 OFUserControlApp is a small ASP.NET Core web application for validating OF user lists against an Active Directory reference table.
