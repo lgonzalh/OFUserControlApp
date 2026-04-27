@@ -34,6 +34,50 @@ public sealed class ApiController : ControllerBase
     }
 
     /// <summary>
+    /// Obtener previsualizacion de los primeros registros del Excel
+    /// </summary>
+    [HttpPost("preview-excel")]
+    public async Task<IActionResult> PreviewExcel(IFormFile file)
+    {
+        try
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest(new { success = false, message = "Debe seleccionar un archivo valido" });
+            }
+
+            if (!_excelProcessorService.IsValidExcelFile(file.FileName, file.Length))
+            {
+                return BadRequest(new { success = false, message = "Archivo invalido. Solo se permiten archivos Excel (.xls, .xlsx) de maximo 50MB" });
+            }
+
+            await using var stream = file.OpenReadStream();
+            var usuarios = (await _excelProcessorService.ExtractUsersFromExcelAsync(stream, file.FileName)).ToList();
+            var preview = usuarios
+                .Take(10)
+                .Select((usuario, index) => new
+                {
+                    numero = index + 1,
+                    usuario = usuario.Usuario ?? string.Empty,
+                    correo = usuario.Correo ?? string.Empty
+                })
+                .ToList();
+
+            return Ok(new
+            {
+                success = true,
+                total = usuarios.Count,
+                preview
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error generando previsualizacion para archivo {FileName}", file?.FileName);
+            return StatusCode(500, new { success = false, message = "No se pudo generar la previsualizacion del archivo" });
+        }
+    }
+
+    /// <summary>
     /// Procesar archivo Excel
     /// </summary>
     [HttpPost("process-excel")]

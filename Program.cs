@@ -9,6 +9,10 @@ using OfficeOpenXml;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Visual Studio can launch this project from bin/Debug with Production as the
+// environment. Load local secrets explicitly so development DB settings still work.
+builder.Configuration.AddUserSecrets<Program>(optional: true);
+
 // Configuración de servicios
 builder.Services.AddControllersWithViews();
 

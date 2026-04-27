@@ -31,6 +31,13 @@ class UsuarioApp {
         this.errorContainer = document.getElementById('errorContainer');
         this.errorMessage = document.getElementById('errorMessage');
         this.fileValidationMessage = document.getElementById('fileValidationMessage');
+        this.previewContainer = document.getElementById('previewContainer');
+        this.previewSubtitle = document.getElementById('previewSubtitle');
+        this.previewCount = document.getElementById('previewCount');
+        this.previewLoading = document.getElementById('previewLoading');
+        this.previewEmpty = document.getElementById('previewEmpty');
+        this.previewTableWrap = document.getElementById('previewTableWrap');
+        this.previewTableBody = document.getElementById('previewTableBody');
     }
 
     initializeEvents() {
@@ -100,6 +107,8 @@ class UsuarioApp {
         if (this.fileNameDisplay) {
             this.fileNameDisplay.textContent = `Archivo seleccionado: ${file.name} (${this.formatFileSize(file.size)})`;
         }
+
+        this.loadPreview(file);
     }
 
     clearFileState() {
@@ -110,6 +119,7 @@ class UsuarioApp {
         }
         this.hideContainers(['progressContainer', 'resultsContainer', 'errorContainer']);
         this.hideFileValidationMessage();
+        this.hidePreview();
     }
 
     // Método eliminado ya que ahora manejamos el texto directamente en handleFile y clearFileState
@@ -187,6 +197,87 @@ class UsuarioApp {
             this.showError('Error de conexión. Por favor, inténtelo nuevamente.');
             this.resetForm();
         }
+    }
+
+    async loadPreview(file) {
+        if (!this.previewContainer) return;
+
+        this.setPreviewLoading(file);
+
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await fetch('/api/Api/preview-excel', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+                throw new Error(result.message || `HTTP error! status: ${response.status}`);
+            }
+
+            this.renderPreview(result.preview || [], result.total || 0, file.name);
+        } catch (error) {
+            console.error('Error cargando previsualizacion:', error);
+            this.showPreviewEmpty('No se pudo generar la vista previa. Puedes iniciar el proceso de todos modos.');
+        }
+    }
+
+    setPreviewLoading(file) {
+        this.previewContainer.style.display = 'block';
+        this.previewSubtitle.textContent = file.name;
+        this.previewCount.textContent = 'Leyendo...';
+        this.previewLoading.style.display = 'flex';
+        this.previewEmpty.style.display = 'none';
+        this.previewTableWrap.style.display = 'none';
+        this.previewTableBody.innerHTML = '';
+    }
+
+    renderPreview(rows, total, fileName) {
+        this.previewSubtitle.textContent = fileName;
+        this.previewCount.textContent = `${Math.min(rows.length, 10)} de ${total.toLocaleString()} registros`;
+        this.previewLoading.style.display = 'none';
+
+        if (!rows.length) {
+            this.showPreviewEmpty('No se encontraron registros para mostrar.');
+            return;
+        }
+
+        this.previewTableBody.innerHTML = rows.map(row => {
+            const usuario = this.escapeHtml(row.usuario);
+            const correo = this.escapeHtml(row.correo);
+
+            return `
+                <tr>
+                    <td>${row.numero}</td>
+                    <td title="${usuario}">${usuario || '<span class="text-muted">Sin usuario</span>'}</td>
+                    <td title="${correo}">${correo || '<span class="text-muted">Sin correo</span>'}</td>
+                </tr>
+            `;
+        }).join('');
+
+        this.previewEmpty.style.display = 'none';
+        this.previewTableWrap.style.display = 'block';
+    }
+
+    showPreviewEmpty(message) {
+        if (!this.previewContainer) return;
+
+        this.previewLoading.style.display = 'none';
+        this.previewTableWrap.style.display = 'none';
+        this.previewEmpty.textContent = message;
+        this.previewEmpty.style.display = 'flex';
+        this.previewCount.textContent = 'Sin vista previa';
+    }
+
+    hidePreview() {
+        if (!this.previewContainer) return;
+
+        this.previewContainer.style.display = 'none';
+        this.previewTableBody.innerHTML = '';
     }
 
     updateProgress(progreso) {
@@ -343,6 +434,15 @@ class UsuarioApp {
         const sizes = ['Bytes', 'KB', 'MB', 'GB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    escapeHtml(value) {
+        return String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
     }
 }
 

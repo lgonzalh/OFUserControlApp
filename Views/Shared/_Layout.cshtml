@@ -191,6 +191,108 @@
             background-color: var(--text-dark) !important;
             color: var(--text-light) !important;
         }
+
+        .preview-panel {
+            border: 1px solid #d9dee7;
+            border-radius: 8px;
+            background: #ffffff;
+            box-shadow: 0 8px 24px rgba(17, 24, 39, 0.06);
+            overflow: hidden;
+        }
+
+        .preview-panel__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #e5e7eb;
+            background: #f8fafc;
+        }
+
+        .preview-panel__title {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .preview-panel__subtitle {
+            margin-top: 0.15rem;
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+
+        .preview-panel__badge {
+            flex: 0 0 auto;
+            border: 1px solid #111827;
+            border-radius: 999px;
+            padding: 0.25rem 0.65rem;
+            color: #111827;
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: #ffffff;
+        }
+
+        .preview-state {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 1.25rem;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .preview-table-wrap {
+            overflow-x: auto;
+        }
+
+        .preview-table {
+            min-width: 680px;
+            table-layout: fixed;
+        }
+
+        .preview-table th {
+            padding: 0.7rem 1rem;
+            border-bottom: 1px solid #d9dee7;
+            background: #f8fafc;
+            color: #374151;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0;
+        }
+
+        .preview-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #edf0f5;
+            color: #111827;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .preview-table th:first-child,
+        .preview-table td:first-child {
+            width: 4rem;
+            color: #64748b;
+            text-align: center;
+        }
+
+        .preview-table tbody tr:nth-child(even) td {
+            background: #fcfcfd;
+        }
+
+        @@media (max-width: 576px) {
+            .preview-panel__header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .preview-table {
+                min-width: 560px;
+            }
+        }
     </style>
 </head>
 <body class="d-flex flex-column h-100">

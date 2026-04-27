@@ -1,78 +1,95 @@
 @{
-    ViewData["Title"] = "Validación Usuarios OF vs Directorio Activo";
+    ViewData["Title"] = "Validacion Usuarios OF vs Directorio Activo";
 }
 
 <div class="row justify-content-center">
-    <div class="col-lg-8">
-        <!-- Título principal -->
+    <div class="col-lg-10 col-xl-9">
         <div class="text-center mb-4">
             <h1 class="h2 fw-bold text-dark mb-3">
-                Validación Usuarios OF vs Directorio Activo
+                Validacion Usuarios OF vs Directorio Activo
             </h1>
         </div>
 
-        <!-- Instrucción -->
         <div class="text-center mb-3">
             <p class="text-dark mb-0">Seleccionar archivo(s) a cargar...</p>
         </div>
 
-        <!-- Área de carga de archivos -->
         <div class="text-center mb-3">
             <input type="file" id="fileInput" accept=".xls,.xlsx" style="display: none;" />
             <button type="button" id="elegirArchivoBtn">Elegir archivo</button>
-            <span id="fileNameDisplay" style="margin-left: 10px; color: #6c757d;">No se eligió ningún archivo</span>
+            <span id="fileNameDisplay" style="margin-left: 10px; color: #6c757d;">No se eligio ningun archivo</span>
         </div>
 
-        <!-- Botón Iniciar -->
-        <div class="text-center">
+        <section id="previewContainer" class="preview-panel mt-4" style="display: none;" aria-live="polite">
+            <div class="preview-panel__header">
+                <div>
+                    <h2 class="preview-panel__title">Previsualizacion del archivo</h2>
+                    <p id="previewSubtitle" class="preview-panel__subtitle mb-0"></p>
+                </div>
+                <span id="previewCount" class="preview-panel__badge"></span>
+            </div>
+
+            <div id="previewLoading" class="preview-state">
+                <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
+                <span>Preparando vista previa...</span>
+            </div>
+
+            <div id="previewEmpty" class="preview-state" style="display: none;">
+                No se encontraron registros para mostrar.
+            </div>
+
+            <div id="previewTableWrap" class="preview-table-wrap" style="display: none;">
+                <table class="table preview-table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Usuario</th>
+                            <th scope="col">Correo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="previewTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <div class="text-center mt-4">
             <button type="button" class="btn btn-success" id="processBtn" disabled>
                 Iniciar
             </button>
         </div>
 
-                <!-- Barra de progreso -->
-                <div id="progressContainer" class="mt-4" style="display: none;">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <strong id="progressLabel">Preparando...</strong>
-                        <span id="progressPercent" class="text-primary fw-bold">0%</span>
-                    </div>
-                    <div class="progress mb-3">
-                        <div id="progressBar" class="progress-bar progress-bar-animated" style="width: 0%"></div>
-                    </div>
-                    <div id="progressMessage" class="text-muted small"></div>
-                </div>
+        <div id="progressContainer" class="mt-4" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <strong id="progressLabel">Preparando...</strong>
+                <span id="progressPercent" class="text-primary fw-bold">0%</span>
+            </div>
+            <div class="progress mb-3">
+                <div id="progressBar" class="progress-bar progress-bar-animated" style="width: 0%"></div>
+            </div>
+            <div id="progressMessage" class="text-muted small"></div>
+        </div>
 
-                <!-- Resultados -->
-                <div id="resultsContainer" class="mt-4" style="display: none;">
-                    <div class="alert alert-success">
-                        <h5 class="alert-heading">
-                            ¡Proceso Completado!
-                        </h5>
-                        <div id="resultsSummary"></div>
-                        <hr>
-                        <div class="d-flex gap-2">
-                            <a id="viewResultsBtn" class="btn btn-dark" href="#">
-                                Ver Resultados Detallados
-                            </a>
-                            <a id="downloadExcelBtn" class="btn btn-outline-dark" href="#">
-                                Descargar Excel
-                            </a>
-                        </div>
-                    </div>
+        <div id="resultsContainer" class="mt-4" style="display: none;">
+            <div class="alert alert-success">
+                <h5 class="alert-heading">Proceso Completado</h5>
+                <div id="resultsSummary"></div>
+                <hr>
+                <div class="d-flex gap-2">
+                    <a id="viewResultsBtn" class="btn btn-dark" href="#">Ver Resultados Detallados</a>
+                    <a id="downloadExcelBtn" class="btn btn-outline-dark" href="#">Descargar Excel</a>
                 </div>
+            </div>
+        </div>
 
-                <!-- Alertas de error -->
-                <div id="errorContainer" class="mt-4" style="display: none;">
-                    <div class="alert alert-danger">
-                        <strong>Error</strong>
-                        <div id="errorMessage"></div>
-                    </div>
-                </div>
+        <div id="errorContainer" class="mt-4" style="display: none;">
+            <div class="alert alert-danger">
+                <strong>Error</strong>
+                <div id="errorMessage"></div>
             </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <script src="~/js/app.js"></script>
+    <script src="~/js/app.js" asp-append-version="true"></script>
 }

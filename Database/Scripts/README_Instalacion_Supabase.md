@@ -1,91 +1,96 @@
-# INSTRUCCIONES DE INSTALACIÓN - SUPABASE
-# =============================================
-# Proyecto: OFUserControlApp
-# Base de datos: PostgreSQL en Supabase
-# =============================================
+# Instrucciones de instalacion - Supabase
 
-## 📋 ORDEN DE EJECUCIÓN DE SCRIPTS
+Proyecto: OFUserControlApp
+Base de datos: PostgreSQL en Supabase
 
-Los scripts deben ejecutarse en el siguiente orden en la consola SQL de Supabase:
+## Orden de ejecucion de scripts
 
-### 1️⃣ PRIMERO: Crear estructura de tablas
-**Archivo:** `a_CreateTables_PostgreSQL.sql`
+Ejecuta los scripts en este orden desde el SQL Editor de Supabase.
+
+### 1. Crear estructura
+
+Archivo: `a_CreateTables_PostgreSQL.sql`
 
 Este script crea:
-- Tabla `Stg_UsuariosExcel` (para datos de Excel)
-- Tabla `Rpt_UsuariosCruce` (resultados del cruce)
-- Tabla `LogProceso` (logs de ejecución)
-- Tabla `View_Usuarios` (Directorio Activo - referencia para cruces)
-- Vista `vw_EstadisticasUsuarios` (estadísticas)
-- Procedimientos almacenados `usp_CruzarUsuariosExcelConView` y `usp_LimpiarDatosAntiguos`
 
-### 2️⃣ SEGUNDO: Poblar Directorio Activo
-**Archivo:** `b_Insert_View_Usuarios_FromExcel.sql`
+- Tabla `Stg_UsuariosExcel` para datos cargados desde Excel.
+- Tabla `Rpt_UsuariosCruce` para resultados del cruce.
+- Tabla `LogProceso` para logs de ejecucion.
+- Tabla `View_Usuarios` como referencia del Directorio Activo.
+- Vista `vw_EstadisticasUsuarios`.
+- Procedimientos `usp_CruzarUsuariosExcelConView` y `usp_LimpiarDatosAntiguos`.
 
-Este script inserta los usuarios del Directorio Activo (obtenidos del Excel View_Usuarios.xlsx) en la tabla `View_Usuarios`.
+### 2. Poblar Directorio Activo
 
-### 3️⃣ OPCIONAL: Datos de prueba
-**Archivo:** `c_Insert_View_Usuarios_Sinteticos.sql`
+Archivo: `b_Insert_View_Usuarios_FromExcel.sql`
 
-Este script contiene datos sintéticos de prueba si no tienes el Excel real del Directorio Activo.
+Inserta usuarios de referencia en `View_Usuarios`.
 
-## 🔧 CONFIGURACIÓN DE CONEXIÓN EN SUPABASE
+### 3. Datos sinteticos opcionales
 
-### Datos de conexión que necesitarás en tu aplicación:
+Archivo: `c_Insert_View_Usuarios_Sinteticos.sql`
+
+Usalo si quieres probar sin datos reales del Directorio Activo.
+
+## Conexion recomendada
+
+Para desarrollo local en Windows, usa la cadena **Session pooler** de Supabase. La conexion directa `db.<project-ref>.supabase.co:5432` puede resolver solo por IPv6, y muchas redes locales no tienen salida IPv6.
+
+En Supabase:
+
+1. Abre tu proyecto.
+2. Entra a **Connect**.
+3. Copia la cadena de **Session pooler**.
+4. Reemplaza `[YOUR-PASSWORD]` por la contrasena de la base de datos.
+
+Formato esperado por Npgsql:
+
+```text
+Host=aws-0-[REGION].pooler.supabase.com;Port=5432;Database=postgres;Username=postgres.[PROJECT_REF];Password=[DB_PASSWORD];SSL Mode=Require;Trust Server Certificate=true;Timeout=300;Command Timeout=300
 ```
-Host: [tu-proyecto].supabase.co
-Puerto: 5432
-Base de datos: postgres
-Usuario: postgres
-Contraseña: N_v8!jvWY_!%E?9
-SSL: require
+
+Guarda la cadena en secretos de usuario, no en `appsettings.json`:
+
+```powershell
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Host=aws-0-[REGION].pooler.supabase.com;Port=5432;Database=postgres;Username=postgres.[PROJECT_REF];Password=[DB_PASSWORD];SSL Mode=Require;Trust Server Certificate=true;Timeout=300;Command Timeout=300"
 ```
 
-### Ejemplo de cadena de conexión:
+Tambien puedes usar una variable de entorno para una sola sesion:
+
+```powershell
+$env:ConnectionStrings__DefaultConnection="Host=aws-0-[REGION].pooler.supabase.com;Port=5432;Database=postgres;Username=postgres.[PROJECT_REF];Password=[DB_PASSWORD];SSL Mode=Require;Trust Server Certificate=true;Timeout=300;Command Timeout=300"
 ```
-Host=[tu-proyecto].supabase.co;Port=5432;Database=postgres;Username=postgres;Password=N_v8!jvWY_!%E?9;SSL Mode=Require
-```
 
-## 📊 PROCESO DE TRABAJO
+## Verificacion
 
-1. **Ejecutar scripts en orden:** a_ → b_ (o c_ si usas datos de prueba)
-2. **Verificar tablas creadas:** Puedes usar las queries de verificación al final de cada script
-3. **Configurar conexión:** Actualizar la cadena de conexión en tu aplicación
-4. **Probar la aplicación:** 
-   - Subir archivo Excel con usuarios a validar
-   - Ejecutar el proceso de cruce
-   - Ver resultados en la tabla `Rpt_UsuariosCruce`
-
-## 🧪 QUERIES DE VERIFICACIÓN
-
-Después de ejecutar los scripts, puedes verificar:
+Despues de ejecutar los scripts, usa estas consultas:
 
 ```sql
--- Verificar tablas creadas
-SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';
+SELECT table_name
+FROM information_schema.tables
+WHERE table_schema = 'public'
+ORDER BY table_name;
 
--- Verificar usuarios del Directorio Activo
-SELECT COUNT(*) as TotalUsuarios FROM "View_Usuarios";
+SELECT COUNT(*) AS "TotalUsuarios"
+FROM "View_Usuarios";
 
--- Verificar usuarios activos vs inactivos
-SELECT 
-    COUNT(*) as Total,
-    COUNT(CASE WHEN "F_Baja" IS NULL THEN 1 END) as Activos,
-    COUNT(CASE WHEN "F_Baja" IS NOT NULL THEN 1 END) as Inactivos
+SELECT
+    COUNT(*) AS "Total",
+    COUNT(CASE WHEN "F_Baja" IS NULL THEN 1 END) AS "Activos",
+    COUNT(CASE WHEN "F_Baja" IS NOT NULL THEN 1 END) AS "Inactivos"
 FROM "View_Usuarios";
 ```
 
-## ⚠️ NOTAS IMPORTANTES
+## Notas importantes
 
-- **Seguridad:** Nunca compartas la contraseña de la BD en commits o repositorios públicos
-- **Backup:** Considera hacer backup antes de ejecutar `TRUNCATE` en producción
-- **Índices:** Los índices se crean automáticamente con los scripts para optimizar búsquedas
-- **SSL:** Siempre usa SSL en producción (Require)
+- No guardes contrasenas en archivos versionables.
+- Los scripts de carga usan `TRUNCATE`; revisalos antes de ejecutarlos contra datos reales.
+- Usa SSL en Supabase.
+- Si la app no conecta usando el host `db.<project-ref>.supabase.co`, cambia a **Session pooler**.
 
-## 🚀 SIGUIENTES PASOS
+## Probar la app
 
-Una vez ejecutados los scripts y configurada la conexión:
-1. Levantar la aplicación ASP.NET
-2. Subir archivo Excel con usuarios a validar
-3. Ejecutar el proceso de cruce
-4. Revisar resultados en la interfaz web
+1. Configura la cadena con `dotnet user-secrets`.
+2. Ejecuta `dotnet run`.
+3. Confirma que el log muestre `Conexion a la base de datos establecida correctamente`.
+4. Sube un Excel desde la interfaz y ejecuta el cruce.

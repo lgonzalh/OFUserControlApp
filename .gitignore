@@ -1,0 +1,21 @@
+.vs/
+bin/
+obj/
+artifacts/
+*.log
+
+# Local data files
+Database/*.xlsx
+Database/*.xls
+Database/Scripts/*.csv
+
+# User-specific IDE files
+*.rsuser
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Generated local import helpers/data
+Database/Scripts/import_*.sql
+Database/Scripts/csv_to_sql.py

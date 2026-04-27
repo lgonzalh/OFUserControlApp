@@ -51,10 +51,10 @@ public sealed class ExcelProcessorService : IExcelProcessorService
             await excelStream.CopyToAsync(memoryStream);
             memoryStream.Position = 0;
 
-            // Verificar si es el archivo HM_Listado_de_Usuarios
-            if (fileName.Contains("HM_Listado_de_Usuarios"))
+            // Verificar si es el archivo HM_Listado_de_Usuarios o Listado_Usuarios
+            if (fileName.Contains("HM_Listado_de_Usuarios") || fileName.Contains("Listado_Usuarios"))
             {
-                _logger.LogInformation("Detectado archivo HM_Listado_de_Usuarios, usando procesamiento especializado");
+                _logger.LogInformation("Detectado archivo de listado de usuarios, usando procesamiento especializado");
                 return await ExtractFromHMListadoAsync(memoryStream, fileName);
             }
 
@@ -115,23 +115,23 @@ public sealed class ExcelProcessorService : IExcelProcessorService
             filasProcesadas++;
             
             // Obtener valores de las columnas
-            var usuario = worksheet.Cells[row, usuarioCol].Value?.ToString()?.Trim();
-            var descripcion = worksheet.Cells[row, descripcionCol].Value?.ToString()?.Trim();
-            var correoElectronico = worksheet.Cells[row, correoElectronicoCol].Value?.ToString()?.Trim();
+            var usuarioVal = worksheet.Cells[row, usuarioCol].Value?.ToString()?.Trim();
+            var correoElectronicoVal = worksheet.Cells[row, correoElectronicoCol].Value?.ToString()?.Trim();
 
-            // Validar que al menos tengamos un email válido
-            if (!string.IsNullOrWhiteSpace(usuario) && IsValidEmail(usuario))
+            if (IsHeaderLikeRow(usuarioVal, correoElectronicoVal))
             {
-                // Usar el correo electrónico si está disponible, sino usar el usuario
-                var correoFinal = !string.IsNullOrWhiteSpace(correoElectronico) && IsValidEmail(correoElectronico) 
-                    ? correoElectronico 
-                    : usuario;
+                continue;
+            }
 
+            // Validar que tengamos al menos un identificador
+            if (!string.IsNullOrWhiteSpace(usuarioVal) || !string.IsNullOrWhiteSpace(correoElectronicoVal))
+            {
                 filasValidas++;
                 usuarios.Add(new UsuarioExcel
                 {
-                    Usuario = descripcion ?? usuario, // Usar descripción como nombre de usuario, sino el email
-                    Correo = correoFinal.ToLowerInvariant()
+                    // Prioridad según requerimiento: Columna A (Usuario) y Columna F (Correo)
+                    Usuario = usuarioVal ?? string.Empty,
+                    Correo = (correoElectronicoVal ?? string.Empty).ToLowerInvariant()
                 });
             }
         }
@@ -189,26 +189,25 @@ public sealed class ExcelProcessorService : IExcelProcessorService
             var usuario = worksheet.Cells[row, usuarioCol].Value?.ToString()?.Trim();
             var correo = worksheet.Cells[row, correoCol].Value?.ToString()?.Trim();
 
+            if (IsHeaderLikeRow(usuario, correo))
+            {
+                continue;
+            }
+
             // Si no hay correo pero hay usuario, usar el usuario como correo
             if (string.IsNullOrWhiteSpace(correo) && !string.IsNullOrWhiteSpace(usuario))
             {
                 correo = usuario;
             }
 
-            // Validar que tengamos al menos un identificador válido
-            if (!string.IsNullOrWhiteSpace(usuario) && !string.IsNullOrWhiteSpace(correo) && (IsValidEmail(correo) || IsValidEmail(usuario)))
+            // Validar que tengamos al menos un identificador
+            if (!string.IsNullOrWhiteSpace(usuario) || !string.IsNullOrWhiteSpace(correo))
             {
-                // Si el usuario no es válido pero el correo sí, usar el correo como usuario
-                if (string.IsNullOrWhiteSpace(usuario) || !IsValidEmail(usuario))
-                {
-                    usuario = correo;
-                }
-
                 filasValidas++;
                 usuarios.Add(new UsuarioExcel
                 {
-                    Usuario = usuario,
-                    Correo = correo.ToLowerInvariant()
+                    Usuario = usuario ?? string.Empty,
+                    Correo = (correo ?? string.Empty).ToLowerInvariant()
                 });
             }
             else
@@ -543,5 +542,14 @@ public sealed class ExcelProcessorService : IExcelProcessorService
         {
             return false;
         }
+    }
+
+    private static bool IsHeaderLikeRow(string? usuario, string? correo)
+    {
+        var normalizedUsuario = usuario?.Trim().ToLowerInvariant();
+        var normalizedCorreo = correo?.Trim().ToLowerInvariant();
+
+        return normalizedUsuario is "usuario" or "user" or "usuarios"
+            || normalizedCorreo is "correo" or "correo electronico" or "correo electrónico" or "email" or "mail";
     }
 }

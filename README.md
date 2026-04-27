@@ -1,86 +1,97 @@
 # OFUserControlApp
 
-Aplicacion web para validacion de usuarios OF vs Directorio Activo mediante procesamiento de archivos Excel.
+## English
 
-## Descripcion
+OFUserControlApp is a small ASP.NET Core web application for validating OF user lists against an Active Directory reference table.
 
-La aplicacion permite cargar archivos Excel con listados de usuarios y cruzarlos con la vista `View_Usuarios` para identificar usuarios habilitados e inactivos.
+### Features
 
-## Tecnologias
+- Upload Excel user lists.
+- Preview the first 10 records before processing.
+- Compare uploaded users against `View_Usuarios`.
+- Review totals and detailed results.
+- Export the generated results.
 
-- Backend: ASP.NET Core 10.0, Entity Framework Core
-- Frontend: Razor Views + SignalR
-- Base de Datos: PostgreSQL (Supabase)
-- Procesamiento: EPPlus
+### Stack
 
-## Arquitectura
+- ASP.NET Core 10
+- Entity Framework Core
+- Razor Views
+- SignalR
+- PostgreSQL on Supabase
 
-- Domain: entidades y contratos
-- Application: logica de negocio y DTOs
-- Infrastructure: repositorios y acceso a datos
-- Presentation: MVC + API + SignalR
+### Setup
 
-## Configuracion
+Run the database script in Supabase:
 
-### 1. Esquema de base de datos
-
-Ejecuta el script:
-
-- `Database/Scripts/CreateTables_PostgreSQL.sql`
-
-Este script crea:
-
-- `Stg_UsuariosExcel`
-- `Rpt_UsuariosCruce`
-- `LogProceso`
-- `vw_EstadisticasUsuarios`
-
-Tambien incluye procedimientos equivalentes heredados, aunque el repositorio actual realiza el cruce directamente por SQL.
-
-### 2. Cadena de conexion
-
-Configura `appsettings.json` o `appsettings.Development.json`:
-
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Host=YOUR_SUPABASE_HOST;Port=5432;Database=postgres;Username=postgres;Password=YOUR_SUPABASE_PASSWORD;SSL Mode=Require;Trust Server Certificate=true;Timeout=300;Command Timeout=300"
-  }
-}
+```text
+Database/Scripts/a_CreateTables_PostgreSQL.sql
 ```
 
-Recomendado: usar secretos de usuario o variables de entorno para el password.
+Configure the connection string with user secrets:
 
-### 3. Permisos requeridos
+```powershell
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Host=aws-0-[REGION].pooler.supabase.com;Port=5432;Database=postgres;Username=postgres.[PROJECT_REF];Password=[DB_PASSWORD];SSL Mode=Require;Trust Server Certificate=true;Timeout=300;Command Timeout=300"
+```
 
-El usuario de PostgreSQL debe tener al menos:
+Run the application:
 
-- `SELECT/INSERT/DELETE` en `Stg_UsuariosExcel`
-- `SELECT/INSERT/DELETE` en `Rpt_UsuariosCruce`
-- `SELECT` en `View_Usuarios`
-- `SELECT/INSERT` en `LogProceso` (si se usa logging por SQL)
-
-## Ejecucion
-
-```bash
+```powershell
 dotnet restore
 dotnet build
-dotnet run
+dotnet run --launch-profile OFUserControlApp
 ```
 
-## Flujo funcional
+Open:
 
-1. Carga de archivo `.xls`.
-2. Extraccion de usuarios.
-3. Insercion en tabla staging.
-4. Cruce con `View_Usuarios`.
-5. Consulta de resultados y resumen.
-6. Exportacion a Excel.
-7. Limpieza de datos temporales del proceso.
+```text
+http://localhost:5000/
+```
 
-## Solucion de problemas
+## Espanol
 
-- Error de conexion: valida host, puerto, usuario, password y SSL.
-- Error de carga en BD: valida que las tablas del script PostgreSQL existan.
-- Error de cruce: valida que exista la vista `View_Usuarios` con columnas `EMail` y `User_SO`.
+OFUserControlApp es una aplicacion web ASP.NET Core para validar listados de usuarios OF contra una tabla de referencia de Directorio Activo.
 
+### Funcionalidades
+
+- Cargar listados de usuarios en Excel.
+- Ver una previsualizacion de los primeros 10 registros.
+- Cruzar usuarios cargados contra `View_Usuarios`.
+- Revisar totales y resultados detallados.
+- Exportar los resultados generados.
+
+### Tecnologias
+
+- ASP.NET Core 10
+- Entity Framework Core
+- Razor Views
+- SignalR
+- PostgreSQL en Supabase
+
+### Configuracion
+
+Ejecuta el script de base de datos en Supabase:
+
+```text
+Database/Scripts/a_CreateTables_PostgreSQL.sql
+```
+
+Configura la cadena de conexion con secretos de usuario:
+
+```powershell
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Host=aws-0-[REGION].pooler.supabase.com;Port=5432;Database=postgres;Username=postgres.[PROJECT_REF];Password=[DB_PASSWORD];SSL Mode=Require;Trust Server Certificate=true;Timeout=300;Command Timeout=300"
+```
+
+Ejecuta la aplicacion:
+
+```powershell
+dotnet restore
+dotnet build
+dotnet run --launch-profile OFUserControlApp
+```
+
+Abre:
+
+```text
+http://localhost:5000/
+```
